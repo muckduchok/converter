@@ -9,8 +9,8 @@
 }
 
 img {
-  height: 50px;
-  width: 50px;
+  height: 40px;
+  width: 40px;
 }
 
 span {
@@ -36,4 +36,22 @@ hr {
 
 input {
   margin: 10px 0;
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.btn-settings {
+  width: 35px;
+  height: 35px;
+  border: none;
+  background-image: url("./images/settings.svg");
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
+  background-color: transparent;
+  cursor: pointer;
 }

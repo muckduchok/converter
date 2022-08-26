@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
+import logo from './images/logo.png';
 import './App.css';
 
 function App() {
   const [currency, setCurrency] = useState([]);
+  const [settings, setSettings] = useState(false);
+  const [currentSelect, setCurrentSelect] = useState('');
   const [uah, setUah] = useState('');
   const [usd, setUsd] = useState('');
   const [pln, setPln] = useState('');
@@ -12,6 +14,11 @@ function App() {
       const response = await fetch('https://api.monobank.ua/bank/currency');
       const json = await response.json();
       setCurrency(json);
+  }
+
+  function selectDefault(value) {
+      setCurrentSelect(value);
+      localStorage.setItem('current', value)
   }
 
   function changeUah(value) {
@@ -33,7 +40,7 @@ function App() {
       setUah(convertUsd)
       setPln(convertPln)
   }
-    function changePln(value) {
+  function changePln(value) {
         let pln = currency.filter((cur) => cur.currencyCodeA === 985);
         let convertUah = (parseInt(value) * pln[0].rateCross).toFixed(2).toString();
         let convertPln = (parseInt(value) / 4.73).toFixed(2).toString();
@@ -44,6 +51,7 @@ function App() {
     }
 
   useEffect(() => {
+    setCurrentSelect(localStorage.getItem('current'))
     getCurrentCurrency();
   }, [])
 
@@ -60,6 +68,18 @@ function App() {
               <label className="block-label" htmlFor="usd">PLN</label>
               <input onChange={(e) => changePln(e.target.value)} name="pln" value={pln} type="number"/>
           </div>
+          <hr />
+          <button onClick={() => setSettings(!settings)} className="btn-settings"></button>
+          {settings &&
+              <div className="settings">
+                  <span>Choice main сurrency</span>
+                  <select onChange={(e) => selectDefault(e.target.value)} value={currentSelect}>
+                      <option value="USD">USD</option>
+                      <option value="UAH">UAH</option>
+                      <option value="PLN">PLN</option>
+                  </select>
+              </div>
+          }
       </header>
     </div>
   );
