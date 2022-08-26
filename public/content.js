@@ -25,19 +25,17 @@ function showCalculateModal(rates) {
   }
 }
 
-document.addEventListener('mouseup', async (e) => {
-  let amount = document.getSelection().toString().replace(/ /g, '');
-  let isNum = /^\d+$/.test(amount);
+document.addEventListener('mouseup', async () => {
+  let amount = document.getSelection().toString().replace(/[^\d/.]/g, "");
+  let isDot = amount[0] === '.';
 
-  console.log('amount', amount.split(''));
-  if (amount.length > 0 && isNum) {
-    chrome.storage.sync.get(['key'], function(results) {
-      fetch(api_base + `${results.key}&symbols=USD,UAH,PLN&amount=` + amount)
+  if (amount.length > 0 && !isDot) {
+    chrome.storage.sync.get(['key'], function(cur) {
+      fetch(api_base + `${cur.key}&symbols=USD,UAH,PLN&amount=` + amount)
           .then(r => r.text())
           .then(result => {
             let rates = JSON.parse(result)["rates"]
             showCalculateModal(rates);
-            console.log('rates', rates)
           })
     });
   }
@@ -50,7 +48,3 @@ document.addEventListener('mousedown', async (e) => {
     }
   });
 })
-
-// chrome.storage.sync.get(['currency'], function(result) {
-//   console.log('Value currently is ' + result);
-// });
