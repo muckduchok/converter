@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+/*global chrome*/
+
+import React, {useCallback, useEffect, useState} from 'react';
 import logo from './images/logo.png';
 import './App.css';
 
@@ -11,7 +13,7 @@ function App() {
   const [pln, setPln] = useState('');
 
   async function getCurrentCurrency() {
-      const response = await fetch('https://api.monobank.ua/bank/currency');
+      const response = await fetch('https://api.monobank.ua/bank/currency')
       const json = await response.json();
       setCurrency(json);
   }
@@ -19,7 +21,14 @@ function App() {
   function selectDefault(value) {
       setCurrentSelect(value);
       localStorage.setItem('current', value)
+      chrome.storage && chrome.storage.sync.set({key: value});
   }
+
+  const setDefaultCurrency = useCallback(() => {
+      let currentAmount = localStorage.getItem('current') || 'UAH';
+      setCurrentSelect(currentAmount);
+      chrome.storage && chrome.storage.sync.set({key: currentAmount});
+  }, [])
 
   function changeUah(value) {
       let usd = currency.filter((cur) => cur.currencyCodeA === 840);
@@ -51,9 +60,9 @@ function App() {
     }
 
   useEffect(() => {
-    setCurrentSelect(localStorage.getItem('current'))
-    getCurrentCurrency();
-  }, [])
+    setDefaultCurrency();
+    getCurrentCurrency().then();
+  }, [setDefaultCurrency])
 
   return (
     <div className="App">
