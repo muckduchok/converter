@@ -16,7 +16,7 @@ img {
 span {
   font-size: 16px;
   padding: 10px;
-  width: 100%;
+  text-align: center;
 }
 
 hr {
@@ -42,15 +42,26 @@ input {
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
+  align-items: center;
+}
+
+.settings select {
+  width: 70%;
+}
+
+.settings-default {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .btn-settings {
   width: 35px;
   height: 35px;
   border: none;
-  background-image: url("./images/settings.svg");
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Do not repeat the image */
+  background-image: url("images/settings.svg");
+  background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
   background-color: transparent;
   cursor: pointer;

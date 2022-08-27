@@ -1,13 +1,18 @@
 /*global chrome*/
 
 import React, {useCallback, useEffect, useState} from 'react';
-import logo from './images/logo.png';
-import './App.css';
+import Settings from "./Settings";
+import logo from '../images/logo.png';
+import '../App.css';
 
-function App() {
+const App = () => {
   const [currency, setCurrency] = useState([]);
-  const [settings, setSettings] = useState(false);
-  const [currentSelect, setCurrentSelect] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
+  const [settings, setSettings] = useState({
+      recently: [],
+      defaultCurrency: '',
+      regSearch: false
+  })
   const [uah, setUah] = useState('');
   const [usd, setUsd] = useState('');
   const [pln, setPln] = useState('');
@@ -18,16 +23,25 @@ function App() {
       setCurrency(json);
   }
 
+  function handleCheckbox(value) {
+      setSettings({...settings, regSearch: value});
+      localStorage.setItem('search', value)
+  }
+
   function selectDefault(value) {
-      setCurrentSelect(value);
+      let saveRecently = [...settings.recently, value];
+      setSettings({...settings, defaultCurrency: value, recently: saveRecently});
+      localStorage.setItem('recently', JSON.stringify(saveRecently))
       localStorage.setItem('current', value)
       chrome.storage && chrome.storage.sync.set({key: value});
   }
 
-  const setDefaultCurrency = useCallback(() => {
-      let currentAmount = localStorage.getItem('current') || 'UAH';
-      setCurrentSelect(currentAmount);
-      chrome.storage && chrome.storage.sync.set({key: currentAmount});
+  const initSettings = useCallback(() => {
+      let currency = localStorage.getItem('current') || 'UAH',
+          recently = JSON.parse(localStorage.getItem('recently')) || [],
+          search = JSON.parse(localStorage.getItem('search'));
+      setSettings({regSearch: search, defaultCurrency: currency, recently: recently})
+      chrome.storage && chrome.storage.sync.set({key: currency});
   }, [])
 
   function changeUah(value) {
@@ -60,9 +74,9 @@ function App() {
     }
 
   useEffect(() => {
-    setDefaultCurrency();
+    initSettings();
     getCurrentCurrency().then();
-  }, [setDefaultCurrency])
+  }, [initSettings])
 
   return (
     <div className="App">
@@ -78,16 +92,9 @@ function App() {
               <input onChange={(e) => changePln(e.target.value)} name="pln" value={pln} type="number"/>
           </div>
           <hr />
-          <button onClick={() => setSettings(!settings)} className="btn-settings"></button>
-          {settings &&
-              <div className="settings">
-                  <span>Choice main сurrency</span>
-                  <select onChange={(e) => selectDefault(e.target.value)} value={currentSelect}>
-                      <option value="USD">USD</option>
-                      <option value="UAH">UAH</option>
-                      <option value="PLN">PLN</option>
-                  </select>
-              </div>
+          <button title="Settings" onClick={() => setShowSettings(!showSettings)} className="btn-settings"></button>
+          {showSettings &&
+              <Settings defaultCurrency={selectDefault} handler={handleCheckbox} settings={settings}/>
           }
       </header>
     </div>
