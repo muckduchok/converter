@@ -24,6 +24,8 @@ async function getCurrencies(amount, currency) {
         .then(r => r.text())
         .then(result => {
             let rates = JSON.parse(result)["rates"]
+            console.log('results', rates)
+
             showCalculateModal(rates, amount);
         })
 }
@@ -39,14 +41,17 @@ function showCalculateModal(rates, amount) {
 }
 
 document.addEventListener('mouseup', async () => {
-  let amount = document.getSelection().toString().replace(/[^\d/.]/g, "");
-  let isDot = amount[0] === '.';
+    chrome.storage.sync.get(['search'], function({search}) {
+        let reg = search ? /[^\d/.]/g : ' ',
+            amount = document.getSelection().toString().replace(reg, ''),
+            isDot = amount[0] === '.';
 
-  if (amount.length > 0 && !isDot) {
-    chrome.storage.sync.get(['key'], function(cur) {
-        getCurrencies(amount, cur.key);
+        if (amount.length > 0 && !isDot) {
+          chrome.storage.sync.get(['key'], function({key}) {
+              getCurrencies(amount, key);
+          });
+        }
     });
-  }
 })
 
 document.addEventListener('mousedown', async (e) => {
@@ -64,10 +69,10 @@ function reSelectListener(amount) {
         let type = e.target.value;
             setTimeout(() => {
                 getCurrencies(amount, type);
-                setTimeout(() => {
-                    document.querySelectorAll('.cur-btn')
-                        .forEach(btn => btn.remove());
-                }, 100)
+                // setTimeout(() => {
+                //     document.querySelectorAll('.cur-btn')
+                //         .forEach(btn => btn.remove());
+                // }, 100)
             }, 300)
         })
     })

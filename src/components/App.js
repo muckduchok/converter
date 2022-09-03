@@ -6,7 +6,7 @@ import logo from '../images/logo.png';
 import '../App.css';
 
 const App = () => {
-  const [currency, setCurrency] = useState([]);
+  const [currency, setCurrency] = useState({});
   const [showSettings, setShowSettings] = useState(false);
   const [settings, setSettings] = useState({
       recently: [],
@@ -19,20 +19,29 @@ const App = () => {
 
   async function getCurrentCurrency() {
       const response = await fetch('https://api.monobank.ua/bank/currency')
+      const otherRes = await fetch('https://api.exchangerate.host/latest?base=USD');
+      const json2 = await otherRes.json();
       const json = await response.json();
-      setCurrency(json);
+
+      console.log('json2', json2.rates)
+      setCurrency(json2.rates);
+
+
+      console.log('currency', currency)
+
   }
 
   function handleCheckbox(value) {
       setSettings({...settings, regSearch: value});
       localStorage.setItem('search', value)
+      chrome.storage && chrome.storage.sync.set({search: value});
   }
 
   function selectDefault(value) {
       let saveRecently = [...settings.recently, value];
       setSettings({...settings, defaultCurrency: value, recently: saveRecently});
-      localStorage.setItem('recently', JSON.stringify(saveRecently))
-      localStorage.setItem('current', value)
+      localStorage.setItem('recently', JSON.stringify(saveRecently));
+      localStorage.setItem('current', value);
       chrome.storage && chrome.storage.sync.set({key: value});
   }
 
@@ -42,6 +51,7 @@ const App = () => {
           search = JSON.parse(localStorage.getItem('search'));
       setSettings({regSearch: search, defaultCurrency: currency, recently: recently})
       chrome.storage && chrome.storage.sync.set({key: currency});
+      chrome.storage && chrome.storage.sync.set({search: search});
   }, [])
 
   function changeUah(value) {
@@ -84,12 +94,21 @@ const App = () => {
         <img src={logo} alt="logo" />
         <hr />
           <div className="block">
-              <label className="block-label" htmlFor="uah">UAH</label>
-              <input onChange={(e) => changeUah(e.target.value)} name="uah" type="number" value={uah} />
-              <label className="block-label" htmlFor="usd">USD</label>
-              <input onChange={(e) => changeUsd(e.target.value)} name="usd" value={usd} type="number"/>
-              <label className="block-label" htmlFor="usd">PLN</label>
-              <input onChange={(e) => changePln(e.target.value)} name="pln" value={pln} type="number"/>
+              {Object.keys(currency).map((keyName, i) => (
+                  <div key={keyName}>
+                  <label className="block-label" htmlFor="uah">{keyName}</label>
+                  <input onChange={(e) => changeUah(e.target.value)} name="uah" type="number" value={uah} />
+                  </div>
+                  // <li className="travelcompany-input" key={i}>
+                  //     <span className="input-label">key: {i} Name: {subjects[keyName]}</span>
+                  // </li>
+              ))}
+              {/*<label className="block-label" htmlFor="uah">UAH</label>*/}
+              {/*<input onChange={(e) => changeUah(e.target.value)} name="uah" type="number" value={uah} />*/}
+              {/*<label className="block-label" htmlFor="usd">USD</label>*/}
+              {/*<input onChange={(e) => changeUsd(e.target.value)} name="usd" value={usd} type="number"/>*/}
+              {/*<label className="block-label" htmlFor="usd">PLN</label>*/}
+              {/*<input onChange={(e) => changePln(e.target.value)} name="pln" value={pln} type="number"/>*/}
           </div>
           <hr />
           <button title="Settings" onClick={() => setShowSettings(!showSettings)} className="btn-settings"></button>
