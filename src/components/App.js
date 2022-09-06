@@ -7,6 +7,8 @@ import Exchangerate from '../services';
 import { useDebounce } from '../hooks/useDebounce';
 import Converter from './Converter';
 import { currenciesHandler } from '../utils/currenciesHandler';
+import SettingsButton from '../ui/Button';
+import css from './app.module.css';
 import '../App.css';
 
 const App = () => {
@@ -19,6 +21,7 @@ const App = () => {
   })
   const [current, setCurrent] = useState({amount: null, rate: ''});
   const debounce = useDebounce(current.amount, 500);
+  
 
   async function initCurrencies(type, list, amount) {
     const currencies = await Exchangerate.getRates(type,list,amount);
@@ -77,19 +80,15 @@ const App = () => {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} alt="logo" />
+      <header className={css.AppHeader}>
+        <img className={css.img} src={logo} alt="logo" />
 
         <Converter changeRates={changeRates} currency={currency} />
 
-        <button
-          title="Settings"
-          onClick={() => setShowSettings(!showSettings)}
-          className="btn-settings">
-        </button>
+        <SettingsButton setShowSettings={setShowSettings} showSettings={showSettings} />
         
         {showSettings &&
-            <Settings
+          <Settings
             defaultCurrency={selectDefault}
             handler={handleCheckbox}
             settings={settings}/>

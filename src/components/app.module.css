@@ -1,0 +1,74 @@
+.AppHeader {
+  background-color: #282c34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.img {
+  height: 40px;
+  width: 40px;
+}
+
+.span {
+  font-size: 16px;
+  padding: 10px;
+  text-align: center;
+}
+
+.hr {
+  width: 80%;
+  color: white;
+}
+
+.input {
+  margin: 10px 0;
+}
+
+.block {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.blockLabel {
+  margin-right: 5px;
+}
+
+.blockItems {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.settings select {
+  width: 70%;
+}
+
+.settingsDefault {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.btnSettings {
+  width: 35px;
+  height: 35px;
+  border: none;
+  background-image: url("../images/settings.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: transparent;
+  cursor: pointer;
+}

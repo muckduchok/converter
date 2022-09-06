@@ -1,5 +1,35 @@
-body {
+#convertor-body {
   width: 250px;
   background-color: #282c34;
   font-family: "Roboto","Helvetica","Arial",sans-serif
+}
+
+#converterPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width:120px;
+  width: max-content;
+  height: max-content;
+  background: #282c34;
+  padding: 10px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  z-index: 999999
+}
+
+#converterPopup div {
+  display: flex;
+  justify-content: space-around;
+  width: 100%
+}
+
+#converterPopup button {
+  color: darkseagreen;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }

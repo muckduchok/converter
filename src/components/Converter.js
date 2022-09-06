@@ -1,18 +1,20 @@
 import React from 'react';
+import css from './app.module.css';
 
 const Converter = ({currency, changeRates}) => {
   return (
     <>
-    <hr />
+    <hr className={css.hr} />
       <div className="block">
         {Object.keys(currency).map((keyName, i) => (
-            <div className='block-items' key={keyName}>
+            <div className={css.blockItems} key={keyName}>
               <label
-                className="block-label"
+                className={css.blockLabel}
                 htmlFor={keyName}>
                   {keyName}
               </label>
               <input
+                className={css.input}
                 onChange={(e) => changeRates(e.target.valueAsNumber, keyName)}
                 name={keyName}
                 type="number"
@@ -20,7 +22,7 @@ const Converter = ({currency, changeRates}) => {
             </div>
         ))}
         </div>
-      <hr />
+      <hr className={css.hr} />
     </>
   );
 };
