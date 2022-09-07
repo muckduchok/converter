@@ -8,8 +8,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import Converter from './Converter';
 import { currenciesHandler } from '../utils/currenciesHandler';
 import SettingsButton from '../ui/Button';
-import css from './app.module.css';
-import '../App.css';
+import css from '../styles/app.module.css';
 
 const App = () => {
   const [currency, setCurrency] = useState({});
@@ -30,17 +29,24 @@ const App = () => {
   }
 
   function handleCheckbox(value) {
-      setSettings({...settings, regSearch: value});
-      localStorage.setItem('search', value)
-      chrome.storage && chrome.storage.sync.set({search: value});
+    setSettings({...settings, regSearch: value});
+    localStorage.setItem('search', value)
+    chrome.storage && chrome.storage.sync.set({search: value});
   }
 
   function selectDefault(value) {
-      let saveRecently = [...settings.recently, value];
-      setSettings({...settings, defaultCurrency: value, recently: saveRecently});
-      localStorage.setItem('recently', JSON.stringify(saveRecently));
+    let sameSelect = settings.recently.find((i) => i === value);
+    if (sameSelect) {
+      setSettings({...settings, defaultCurrency: value});
       localStorage.setItem('current', value);
       chrome.storage && chrome.storage.sync.set({key: value});
+      return
+    }
+    let saveRecently = [...settings.recently, value];
+    setSettings({...settings, defaultCurrency: value, recently: saveRecently});
+    localStorage.setItem('recently', JSON.stringify(saveRecently));
+    localStorage.setItem('current', value);
+    chrome.storage && chrome.storage.sync.set({key: value});
   }
 
   const initSettings = useCallback(() => {
@@ -79,22 +85,20 @@ const App = () => {
   }, [settings])
 
   return (
-    <div className="App">
-      <header className={css.AppHeader}>
-        <img className={css.img} src={logo} alt="logo" />
+    <section className={css.AppHeader}>
+      <img className={css.img} src={logo} alt="logo" />
 
-        <Converter changeRates={changeRates} currency={currency} />
+      <Converter changeRates={changeRates} currency={currency} />
 
-        <SettingsButton setShowSettings={setShowSettings} showSettings={showSettings} />
-        
-        {showSettings &&
-          <Settings
-            defaultCurrency={selectDefault}
-            handler={handleCheckbox}
-            settings={settings}/>
-        }
-      </header>
-    </div>
+      <SettingsButton setShowSettings={setShowSettings} showSettings={showSettings} />
+      
+      {showSettings &&
+        <Settings
+          defaultCurrency={selectDefault}
+          handler={handleCheckbox}
+          settings={settings}/>
+      }
+    </section>
   );
 }
 

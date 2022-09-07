@@ -1,5 +1,5 @@
 import React from 'react';
-import css from '../components/app.module.css';
+import css from '../styles/app.module.css';
 
 const SettingsButton = ({setShowSettings, showSettings}) => {
   return (

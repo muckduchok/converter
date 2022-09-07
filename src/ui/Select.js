@@ -1,6 +1,15 @@
 import React from 'react';
 
 const Select = ({list, settings, defaultCurrency}) => {
+    let currencies = list;
+    let settingsRecently = settings.recently;
+
+    settingsRecently.forEach((i) => {
+        currencies.forEach((item, index) => {
+            if (item.code === i) currencies.splice(index, 1)
+        })
+    })
+
     return (
         <select
             onChange={(e) => defaultCurrency(e.target.value)}

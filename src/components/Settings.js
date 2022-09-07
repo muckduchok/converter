@@ -1,7 +1,7 @@
 import React from 'react';
 import list from "../utils/listOfСurrencies.json";
 import Select from "../ui/Select";
-import css from './app.module.css';
+import css from '../styles/app.module.css';
 
 const Settings = ({settings, handler, defaultCurrency}) => {
     const currenciesList = Object.keys(list).map((key) => list[key]);

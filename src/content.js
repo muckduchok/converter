@@ -11,10 +11,10 @@ function Main() {
     const response = await new Exchangerate.getRates(type, recently, amount);
     setRates(response.rates);
     setAmount(amount);
-    showCalculateModal(amount);
+    addModal(amount);
   }
 
-  function showCalculateModal(amount) {
+  function addModal(amount) {
     if (!isNaN(amount)) {
       document.body.appendChild(app);
     }
