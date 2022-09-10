@@ -1,13 +1,13 @@
 /*global chrome*/
 
 import React, {useCallback, useEffect, useState} from 'react';
+import { currenciesHandler } from '../utils/currenciesHandler';
+import { useDebounce } from '../hooks/useDebounce';
+import SettingsButton from '../ui/Button';
+import Exchangerate from '../services';
+import Converter from './Converter';
 import Settings from "./Settings";
 import logo from '../images/logo.png';
-import Exchangerate from '../services';
-import { useDebounce } from '../hooks/useDebounce';
-import Converter from './Converter';
-import { currenciesHandler } from '../utils/currenciesHandler';
-import SettingsButton from '../ui/Button';
 import css from '../styles/app.module.css';
 
 const App = () => {
@@ -17,10 +17,9 @@ const App = () => {
       recently: [],
       defaultCurrency: '',
       regSearch: false
-  })
+  });
   const [current, setCurrent] = useState({amount: null, rate: ''});
   const debounce = useDebounce(current.amount, 500);
-  
 
   async function initCurrencies(type, list, amount) {
     const currencies = await Exchangerate.getRates(type,list,amount);
@@ -30,8 +29,19 @@ const App = () => {
 
   function handleCheckbox(value) {
     setSettings({...settings, regSearch: value});
-    localStorage.setItem('search', value)
+    localStorage.setItem('search', value);
     chrome.storage && chrome.storage.sync.set({search: value});
+  }
+
+  function deleteItem(item) {
+    let newRecently = settings.recently.filter((i) => i !== item);
+    setSettings({...settings, recently: newRecently});
+    localStorage.setItem('recently', JSON.stringify(newRecently));
+    chrome.storage && chrome.storage.sync.set({recently: newRecently});
+    if (settings.defaultCurrency === item) {
+      setSettings({...settings, recently:newRecently, defaultCurrency: newRecently[0]});
+      localStorage.setItem('current', newRecently[0]);
+    }
   }
 
   function selectDefault(value) {
@@ -39,23 +49,23 @@ const App = () => {
     if (sameSelect) {
       setSettings({...settings, defaultCurrency: value});
       localStorage.setItem('current', value);
-      chrome.storage && chrome.storage.sync.set({key: value});
+      chrome.storage && chrome.storage.sync.set({currency: value});
       return
     }
     let saveRecently = [...settings.recently, value];
     setSettings({...settings, defaultCurrency: value, recently: saveRecently});
     localStorage.setItem('recently', JSON.stringify(saveRecently));
     localStorage.setItem('current', value);
-    chrome.storage && chrome.storage.sync.set({key: value});
+    chrome.storage && chrome.storage.sync.set({currency: value, recently: saveRecently});
   }
 
   const initSettings = useCallback(() => {
-      let currency = localStorage.getItem('current') || 'UAH',
-          recently = JSON.parse(localStorage.getItem('recently')) || [],
-          search = JSON.parse(localStorage.getItem('search'));
-      setSettings({regSearch: search, defaultCurrency: currency, recently: recently})
-      chrome.storage && chrome.storage.sync.set({key: currency});
-      chrome.storage && chrome.storage.sync.set({search: search});
+    let currency = localStorage.getItem('current') || 'USD',
+        recently = JSON.parse(localStorage.getItem('recently')) || [],
+        search = JSON.parse(localStorage.getItem('search'));
+    setSettings({regSearch: search, defaultCurrency: currency, recently: recently})
+    chrome.storage && chrome.storage.sync.set(
+      {currency: currency, search: search, recently: recently});
   }, [])
 
   function changeRates(value, keyName) {
@@ -66,14 +76,12 @@ const App = () => {
 
   useEffect(() => {
     initSettings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     if (debounce) {
       initCurrencies(current.rate, settings.recently, debounce);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounce])
 
   useEffect(() => {
@@ -81,14 +89,17 @@ const App = () => {
       const {defaultCurrency, recently} = settings;
       initCurrencies(defaultCurrency, recently);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings])
 
   return (
     <section className={css.AppHeader}>
       <img className={css.img} src={logo} alt="logo" />
 
-      <Converter changeRates={changeRates} currency={currency} />
+      <Converter
+        changeRates={changeRates}
+        currency={currency}
+        deleteItem={deleteItem}
+        recently={settings.recently} />
 
       <SettingsButton setShowSettings={setShowSettings} showSettings={showSettings} />
       

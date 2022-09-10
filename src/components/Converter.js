@@ -1,17 +1,22 @@
 import React from 'react';
 import css from '../styles/app.module.css';
 
-const Converter = ({currency, changeRates}) => {
+const Converter = ({currency, changeRates, deleteItem, recently}) => {
+
   return (
     <>
     <hr className={css.hr} />
+    {recently.length > 0 ?
       <div className="block">
         {Object.keys(currency).map((keyName) => (
             <div className={css.blockItems} key={keyName}>
-              <label
-                className={css.blockLabel}
-                htmlFor={keyName}>{keyName}
-              </label>
+              <div className={css.blockItemsTitle}>
+                <label
+                  className={css.blockLabel}
+                  htmlFor={keyName}>{keyName}
+                </label>
+                <button onClick={() => deleteItem(keyName)} className={css.closeBtn}></button>
+              </div>
               <input
                 id={keyName}
                 className={css.input}
@@ -21,8 +26,10 @@ const Converter = ({currency, changeRates}) => {
                 value={currency[keyName] || ''} />
             </div>
         ))}
-        </div>
-      <hr className={css.hr} />
+        </div> :
+        <div className={css.span}>Select currency in settings</div>
+    }
+    <hr className={css.hr} />
     </>
   );
 };

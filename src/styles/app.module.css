@@ -41,7 +41,7 @@
 .blockItems {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: baseline;
 }
 
 .settings {
@@ -71,4 +71,23 @@
   background-size: cover;
   background-color: transparent;
   cursor: pointer;
+}
+
+.closeBtn {
+  width: 10px;
+  height: 10px;
+  border: none;
+  background-image: url("../images/close.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.blockItemsTitle {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
 }

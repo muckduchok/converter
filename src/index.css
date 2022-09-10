@@ -21,10 +21,14 @@
   z-index: 999999
 }
 
-#converterPopup div {
+#converterPopup .currencies-items {
   display: flex;
-  justify-content: space-around;
+  align-items: center;
   width: 100%
+}
+
+#converterPopup p {
+  margin: 0 5px 0 0;
 }
 
 #converterPopup button {
