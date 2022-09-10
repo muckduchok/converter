@@ -36,4 +36,8 @@
   border: none;
   background: transparent;
   cursor: pointer;
+  padding: 0;
+  min-width: 20px;
+  max-width: 20px;
+  margin: 0;
 }
