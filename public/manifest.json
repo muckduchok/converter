@@ -1,7 +1,7 @@
 {
   "name": "Currency Converter",
   "description": "Currency conversion anywhere",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "manifest_version": 3,
   "action": {
       "default_popup": "index.html",
@@ -13,12 +13,8 @@
       "128": "logo512.png"
   },
   "permissions": [
-    "storage",
-    "scripting"
+    "storage"
  ],
-  "background": {
-    "service_worker": "background.js"
-  },
   "content_scripts": [
     {
         "matches": ["http://*/*", "https://*/*"],
